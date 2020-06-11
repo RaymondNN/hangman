@@ -1,0 +1,49 @@
+import requests, random, time
+
+
+word_site = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
+
+response = requests.get(word_site)
+WORDS = response.content.splitlines()
+num = random.randint(1,len(WORDS))
+
+print("H A N G M A N \nThe game will be starting soon...")
+time.sleep(2)
+def hangman(answer):
+    lives = 5
+    past_attempts = ""
+    hidden = len(answer) * ["-"]
+    print("".join(hidden))
+    hidden_guesses = ("".join(hidden))
+    if lives > 0:
+        while hidden != answer:
+            attempt = input("Guess a letter: ")
+            #Checking to see if the letter has already been guessed
+            if attempt in past_attempts:
+                print("You have already guessed that letter")
+                print(F"Past attempts: {past_attempts}")
+            else:
+                past_attempts += attempt
+                #Correct guess
+                if attempt in answer or attempt in answer.upper():
+                    print(F"Correct! You have {lives} lives left")
+                    for i, l in enumerate(answer):
+                        if l == attempt.lower():
+                            hidden[i] = attempt.lower()
+                    hidden_guesses = ("".join(hidden))
+                    print(hidden_guesses)
+                    if hidden_guesses == answer:
+                        print("Well done! You have found the word!")
+                        break
+                #Incorrect guess
+                else:
+                    lives -= 1
+                    print(F"Incorrect! You have {lives} lives left")
+                    if lives == 0:
+                        print(F"You lose! The word was: {answer}")
+                        break
+
+answer1 = (WORDS[num])
+answer = (answer1.decode('utf-8').lower())
+
+print(hangman(answer))
